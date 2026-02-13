@@ -18,8 +18,13 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var usuario models.Usuario
-
 	if erro = json.Unmarshal(corpoRequest, &usuario); erro != nil {
+		response.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	// validação
+	if erro := usuario.Preparar(); erro != nil {
 		response.Erro(w, http.StatusBadRequest, erro)
 		return
 	}
