@@ -6,6 +6,7 @@ import (
 	"api/src/repositorios"
 	"api/src/response"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -27,7 +28,7 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// validação
-	if erro := usuario.Preparar(); erro != nil {
+	if erro := usuario.Preparar("cadastro"); erro != nil {
 		response.Erro(w, http.StatusBadRequest, erro)
 		return
 	}
@@ -79,6 +80,8 @@ func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
 
 // BuscarUsuario busca um usuario no banco
 func BuscarUsuario(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Recebendo parametros")
+
 	parametros := mux.Vars(r)
 
 	usuarioID, erro := strconv.ParseUint(parametros["usuarioId"], 10, 64)
@@ -107,7 +110,51 @@ func BuscarUsuario(w http.ResponseWriter, r *http.Request) {
 
 // AtualizarUsuario altera usuario no banco
 func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("atualizando um usuario"))
+
+	parametros := mux.Vars(r)
+	usuarioID, erro := strconv.ParseUint(parametros["usuarioId"], 10, 64)
+	if erro != nil {
+		response.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	corpoRequisicao, erro := ioutil.ReadAll(r.Body)
+	if erro != nil {
+		response.Erro(w, http.StatusUnprocessableEntity, erro)
+		return
+	}
+
+	var usuario models.Usuario
+
+	if erro := json.Unmarshal(corpoRequisicao, &usuario); erro != nil {
+		if erro != nil {
+			response.Erro(w, http.StatusBadRequest, erro)
+			return
+		}
+	}
+
+	if erro := usuario.Preparar("edicao"); erro != nil {
+		response.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	db, erro := banco.Conectar()
+	if erro != nil {
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	fmt.Println("CHAMANDO REOP da request")
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
+	if erro := repositorio.Atualizar(usuarioID, usuario); erro != nil {
+		if erro != nil {
+			response.Erro(w, http.StatusInternalServerError, erro)
+			return
+		}
+	}
+	response.JSON(w, http.StatusNoContent, nil)
+
 }
 
 // DeletarUsuario deleta usuario no banco
