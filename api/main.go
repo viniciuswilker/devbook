@@ -10,8 +10,6 @@ import (
 
 func main() {
 	config.Carregar()
-	fmt.Println(config.StringConexaoBanco)
-
 	fmt.Println("Rodando API")
 	r := router.Gerar()
 

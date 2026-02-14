@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 // CriarUsuario insere usuario no banco
@@ -22,7 +23,6 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 		response.Erro(w, http.StatusBadRequest, erro)
 		return
 	}
-
 	// validação
 	if erro := usuario.Preparar(); erro != nil {
 		response.Erro(w, http.StatusBadRequest, erro)
@@ -34,7 +34,6 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 		response.Erro(w, http.StatusInternalServerError, erro)
 		return
 	}
-
 	defer db.Close()
 
 	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
@@ -52,7 +51,27 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 
 // BuscarUsuarios busca usuarios no banco
 func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("buscando todos os usuario"))
+
+	nomeOuNick := strings.ToLower(r.URL.Query().Get("usuario"))
+
+	db, erro := banco.Conectar()
+	if erro != nil {
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
+
+	usuarios, erro := repositorio.Buscar(nomeOuNick)
+
+	if erro != nil {
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	response.JSON(w, http.StatusOK, usuarios)
+	// w.Write([]byte("buscando todos os usuario"))
 }
 
 // BuscarUsuario busca um usuario no banco
