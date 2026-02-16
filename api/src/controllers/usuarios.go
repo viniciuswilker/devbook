@@ -127,10 +127,8 @@ func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
 	var usuario models.Usuario
 
 	if erro := json.Unmarshal(corpoRequisicao, &usuario); erro != nil {
-		if erro != nil {
-			response.Erro(w, http.StatusBadRequest, erro)
-			return
-		}
+		response.Erro(w, http.StatusBadRequest, erro)
+		return
 	}
 
 	if erro := usuario.Preparar("edicao"); erro != nil {
@@ -148,10 +146,8 @@ func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("CHAMANDO REOP da request")
 	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
 	if erro := repositorio.Atualizar(usuarioID, usuario); erro != nil {
-		if erro != nil {
-			response.Erro(w, http.StatusInternalServerError, erro)
-			return
-		}
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
 	}
 	response.JSON(w, http.StatusNoContent, nil)
 
