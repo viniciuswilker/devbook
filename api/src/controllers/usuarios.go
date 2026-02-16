@@ -143,7 +143,6 @@ func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	fmt.Println("CHAMANDO REOP da request")
 	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
 	if erro := repositorio.Atualizar(usuarioID, usuario); erro != nil {
 		response.Erro(w, http.StatusInternalServerError, erro)

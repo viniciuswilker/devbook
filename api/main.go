@@ -12,7 +12,7 @@ func main() {
 	config.Carregar()
 	fmt.Println("Rodando API")
 
-	fmt.Println(config.SecretKey)
+	
 
 	r := router.Gerar()
 
