@@ -10,32 +10,12 @@
 
 <body>
 
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02"
-                aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-                    </li>
-                </ul>
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
-            </div>
-        </div>
-    </nav>
+
+
+
+    {{template "cabecalho"}}
+
+
 
 
     <div class="container-fluid">
@@ -60,18 +40,18 @@
                 </form>
             </fieldset>
 
-        </div>
 
-        <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7 col-xl-7">
-            {{ range .Publicacoes}}
-            <div class="jumbotron">
-                <h1 class="display-4">{{ .Titulo }}</h1>
-                <p class="lead">{{ .Conteudo }}</p>
-                <a href="#">{{ .AutorNick }} - {{ .CriadaEm }}</a>
-                <hr class="my-4">
-                <p>Botoes</p>
+            <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7 col-xl-7">
+                {{ range .Publicacoes}}
+                <div class="jumbotron">
+                    <h1 class="display-4">{{ .Titulo }}</h1>
+                    <p class="lead">{{ .Conteudo }}</p>
+                    <a href="#">{{ .AutorNick }} - {{ .CriadaEm }}</a>
+                    <hr class="my-4">
+                    <p>Botoes</p>
+                </div>
+                {{ end }}
             </div>
-            {{ end }}
         </div>
 
     </div>
@@ -79,7 +59,10 @@
 
 </body>
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+{{template "rodape"}}
+{{template "scripts"}}
+
+
 
 
 </html>
