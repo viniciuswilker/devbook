@@ -28,6 +28,11 @@ func CriarPublicacao(w http.ResponseWriter, r *http.Request) {
 
 	publicacao.AutorID = usuarioID
 
+	if erro := publicacao.Preparar(); erro != nil{
+		response.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
 	if erro := json.Unmarshal(corpoRequisicao, &publicacao); erro != nil {
 		response.Erro(w, http.StatusBadRequest, erro)
 		return
