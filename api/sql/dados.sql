@@ -13,3 +13,11 @@ values
 (1,3),
 (2,3),
 (4,2);
+
+
+insert into publicacoes (titulo, conteudo, autor_id) values
+("Publi do user 1", "Essa é a publi do usuario 1!", 1),
+("Publi do user 2", "Essa é a publi do usuario 2!", 2),
+("Publi do user 3", "Essa é a publi do usuario 3!", 3),
+("Publi do user 4", "Essa é a publi do usuario 4!", 4),
+("Publi do user 2", "Essa é a publi do usuario 2!", 2);

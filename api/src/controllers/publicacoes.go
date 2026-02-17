@@ -9,6 +9,9 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 func CriarPublicacao(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +31,7 @@ func CriarPublicacao(w http.ResponseWriter, r *http.Request) {
 
 	publicacao.AutorID = usuarioID
 
-	if erro := publicacao.Preparar(); erro != nil{
+	if erro := publicacao.Preparar(); erro != nil {
 		response.Erro(w, http.StatusBadRequest, erro)
 		return
 	}
@@ -63,6 +66,30 @@ func BuscarPublicacoes(w http.ResponseWriter, r *http.Request) {
 
 func BuscarPublicacao(w http.ResponseWriter, r *http.Request) {
 
+	parametros := mux.Vars(r)
+	publicacaoId, erro := strconv.ParseUint(parametros["publicacaoId"], 10, 64)
+	if erro != nil {
+		response.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	db, erro := banco.Conectar()
+	if erro != nil {
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositorio := repositorios.NovoRepositorioDePublicacoes(db)
+
+	publicacao, erro := repositorio.BuscarPorID(publicacaoId)
+
+	if erro != nil {
+		response.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	response.JSON(w, http.StatusOK, publicacao)
 }
 
 func AtualizarPublicacao(w http.ResponseWriter, r *http.Request) {
