@@ -73,15 +73,15 @@ func (repositorio Publicacoes) BuscarPorID(publicacaoID uint64) (models.Publicac
 func (repositorio Publicacoes) Buscar(usuarioID uint64) ([]models.Publicacao, error) {
 
 	linhas, erro := repositorio.db.Query(`
-	SELECT DISTINCT p.*,
-					u.nick
-	FROM   publicacoes p
+		SELECT DISTINCT p.*, u.nick
+		FROM publicacoes p
 		INNER JOIN usuarios u
-				ON u.id = p.autor_id
-		INNER JOIN seguidores s
-				ON p.autor_id = s.usuario_id
-	WHERE  u.id = ?
-			OR s.seguidor_id = ? order by 1 desc 
+			ON u.id = p.autor_id
+		LEFT JOIN seguidores s
+			ON p.autor_id = s.usuario_id
+		WHERE p.autor_id = ?
+		OR s.seguidor_id = ?
+		ORDER BY p.id DESC
 `, usuarioID, usuarioID)
 	if erro != nil {
 		return nil, erro
@@ -199,10 +199,9 @@ func (repositorios Publicacoes) Curtir(publicacaoID uint64) error {
 
 }
 
-
 func (repositorios Publicacoes) Descurtir(publicacaoID uint64) error {
 
-    statement, erro := repositorios.db.Prepare(`
+	statement, erro := repositorios.db.Prepare(`
     UPDATE publicacoes
     SET    curtidas = CASE
                         WHEN curtidas > 0 THEN curtidas - 1
@@ -211,14 +210,14 @@ func (repositorios Publicacoes) Descurtir(publicacaoID uint64) error {
     WHERE  id = ?
     `)
 
-    if erro != nil {
-        return erro
-    }
-    defer statement.Close()
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
 
-    if _, erro := statement.Exec(publicacaoID); erro != nil {
-        return erro
-    }
+	if _, erro := statement.Exec(publicacaoID); erro != nil {
+		return erro
+	}
 
-    return nil
+	return nil
 }
