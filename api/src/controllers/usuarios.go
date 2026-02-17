@@ -6,6 +6,7 @@ import (
 	"api/src/models"
 	"api/src/repositorios"
 	"api/src/response"
+	"api/src/seguranca"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -335,4 +336,65 @@ func BuscarSeguindo(w http.ResponseWriter, r *http.Request) {
 
 	response.JSON(w, http.StatusOK, usuarios)
 
+}
+
+func AtualizarSenha(w http.ResponseWriter, r *http.Request) {
+
+	usuarioIDNoToken, erro := autenticacao.ExtrairUsuarioID(r)
+	if erro != nil {
+		response.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	parametros := mux.Vars(r)
+	usuarioID, erro := strconv.ParseUint(parametros["usuarioId"], 10, 62)
+	if erro != nil {
+		response.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	if usuarioIDNoToken != usuarioID {
+		response.Erro(w, http.StatusForbidden, errors.New("Não é possível alterar a senha de um usuario que não seja o seu"))
+		return
+	}
+
+	corpoRequisicao, erro := ioutil.ReadAll(r.Body)
+
+	var senha models.Senha
+	if erro := json.Unmarshal(corpoRequisicao, &senha); erro != nil {
+		response.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	db, erro := banco.Conectar()
+	if erro != nil {
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
+
+	senhaSalvaNoBanco, erro := repositorio.BuscarSenha(usuarioID)
+	if erro != nil {
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	if erro := seguranca.VerificarSenha(senhaSalvaNoBanco, senha.Atual); erro != nil {
+		response.Erro(w, http.StatusUnauthorized, errors.New("A senha atual não condiz com a que esta salva no banco"))
+		return
+	}
+
+	senhaComHash, erro := seguranca.Hash(senha.Nova)
+	if erro != nil {
+		response.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	if erro := repositorio.AtualizarSenha(usuarioID, string(senhaComHash)); erro != nil {
+		response.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	response.JSON(w, http.StatusNoContent, nil)
 }
