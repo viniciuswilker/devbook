@@ -127,3 +127,19 @@ func (repositorios Publicacoes) Atualizar(publicacaoID uint64, publicacao models
 	return nil
 
 }
+
+func (repositorios Publicacoes) Deletar(publicacaoID uint64) error {
+
+	statement, erro := repositorios.db.Prepare("delete from publicacoes where id = ? ")
+	if erro != nil {
+		return erro
+	}
+
+	defer statement.Close()
+
+	if _, erro = statement.Exec(publicacaoID); erro != nil {
+		return erro
+	}
+	return nil
+
+}
