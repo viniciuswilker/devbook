@@ -25,31 +25,66 @@ function criarPublicacao(e) {
 
 
 
-$(".curtir-publicacao").on('click', curtirPublicacao)
-function curtirPublicacao(e) {
+$(document).on('click', '.curtir-publicacao', curtirPublicacao)
+$(document).on('click', '.descurtir-publicacao', descurtirPublicacao)
 
+
+function curtirPublicacao(e) {
     e.preventDefault()
 
-    const elementoClicado = $(e.target)
-    const publicacaoId = elementoClicado.closest('[data-publicacao-id]').data('publicacao-id')
+    const elemento = $(this)
+    const publicacaoId = elemento
+        .closest('[data-publicacao-id]')
+        .data('publicacao-id')
 
-    elementoClicado.prop('disabled', true)
+    elemento.css('pointer-events', 'none')
 
     $.ajax({
         url: `/publicacoes/${publicacaoId}/curtir`,
         method: "POST",
     }).done(function () {
 
-        const contador = elementoClicado.find('.contador-curtidas')
+        const contador = elemento.find('.contador-curtidas')
         const quantidade = parseInt(contador.text())
 
         contador.text(quantidade + 1)
 
+        elemento.removeClass('curtir-publicacao')
+        elemento.addClass('descurtir-publicacao text-danger')
+
     }).fail(function () {
         alert('erro ao curtir')
     }).always(function () {
-        elementoClicado.prop('disabled', false)
-
+        elemento.css('pointer-events', 'auto')
     })
+}
 
+function descurtirPublicacao(e) {
+    e.preventDefault()
+
+    const elemento = $(this)
+    const publicacaoId = elemento
+        .closest('[data-publicacao-id]')
+        .data('publicacao-id')
+
+    elemento.css('pointer-events', 'none')
+
+    $.ajax({
+        url: `/publicacoes/${publicacaoId}/descurtir`,
+        method: "POST",
+    }).done(function () {
+
+        const contador = elemento.find('.contador-curtidas')
+        const quantidade = parseInt(contador.text())
+
+        contador.text(Math.max(0, quantidade - 1))
+
+        elemento.removeClass('descurtir-publicacao text-danger')
+        elemento.addClass('curtir-publicacao')
+
+    }).fail(function () {
+        alert('erro ao descurtir')
+    }).always(function () {
+        elemento.css('pointer-events', 'auto')
+    })
 }
