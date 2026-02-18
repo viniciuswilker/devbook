@@ -8,6 +8,7 @@ import (
 	"api/src/response"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -30,14 +31,16 @@ func CriarPublicacao(w http.ResponseWriter, r *http.Request) {
 
 	var publicacao models.Publicacao
 
-	publicacao.AutorID = usuarioID
-
-	if erro := publicacao.Preparar(); erro != nil {
+	if erro := json.Unmarshal(corpoRequisicao, &publicacao); erro != nil {
 		response.Erro(w, http.StatusBadRequest, erro)
 		return
 	}
 
-	if erro := json.Unmarshal(corpoRequisicao, &publicacao); erro != nil {
+	publicacao.AutorID = usuarioID
+
+	fmt.Printf("%+v\n", publicacao)
+
+	if erro := publicacao.Preparar(); erro != nil {
 		response.Erro(w, http.StatusBadRequest, erro)
 		return
 	}
@@ -58,7 +61,6 @@ func CriarPublicacao(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.JSON(w, http.StatusCreated, publicacao)
-
 }
 
 func BuscarPublicacoes(w http.ResponseWriter, r *http.Request) {

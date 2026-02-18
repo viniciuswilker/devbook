@@ -3,6 +3,7 @@ package repositorios
 import (
 	"api/src/models"
 	"database/sql"
+	"fmt"
 )
 
 type Publicacoes struct {
@@ -21,6 +22,9 @@ func (repositorio Publicacoes) Criar(publicacao models.Publicacao) (uint64, erro
 	}
 
 	defer statement.Close()
+
+	fmt.Println(publicacao.Titulo)
+	fmt.Println(publicacao.Conteudo)
 
 	resultado, erro := statement.Exec(publicacao.Titulo, publicacao.Conteudo, publicacao.AutorID)
 	if erro != nil {
