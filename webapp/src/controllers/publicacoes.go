@@ -13,32 +13,37 @@ import (
 )
 
 func CriarPublicacao(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+	var p struct {
+		Titulo   string `json:"titulo"`
+		Conteudo string `json:"conteudo"`
+	}
 
-	publicacao, erro := json.Marshal(map[string]string{
-		"titulo":   r.FormValue("titulo"),
-		"conteudo": r.FormValue("conteudo"),
-	})
+	err := json.NewDecoder(r.Body).Decode(&p)
+	if err != nil {
+		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: err.Error()})
+		return
+	}
 
-	if erro != nil {
-		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: erro.Error()})
+	publicacao, err := json.Marshal(p)
+	if err != nil {
+		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: err.Error()})
 		return
 	}
 
 	url := fmt.Sprintf("%s/publicacoes", config.APIURL)
-	fmt.Println(url)
 
-	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodPost, url, bytes.NewBuffer(publicacao))
-	if erro != nil {
-		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
+	response, err := requisicoes.FazerRequisicaoComAutenticacao(
+		r,
+		http.MethodPost,
+		url,
+		bytes.NewBuffer(publicacao),
+	)
+
+	if err != nil {
+		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: err.Error()})
 		return
 	}
 	defer response.Body.Close()
-
-	// if response.StatusCode >= 400 {
-	// 	respostas.TratarStatusCodeDeErro(w, response)
-	// 	return
-	// }
 
 	if response.StatusCode >= 400 {
 		body, _ := io.ReadAll(response.Body)
@@ -49,5 +54,4 @@ func CriarPublicacao(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respostas.JSON(w, response.StatusCode, nil)
-
 }

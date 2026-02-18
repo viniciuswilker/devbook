@@ -8,7 +8,6 @@ import (
 	"api/src/response"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -37,8 +36,6 @@ func CriarPublicacao(w http.ResponseWriter, r *http.Request) {
 	}
 
 	publicacao.AutorID = usuarioID
-
-	fmt.Printf("%+v\n", publicacao)
 
 	if erro := publicacao.Preparar(); erro != nil {
 		response.Erro(w, http.StatusBadRequest, erro)
