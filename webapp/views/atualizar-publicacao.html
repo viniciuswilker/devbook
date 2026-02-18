@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevBook — Atualizar Publicação</title>
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+</head>
+
+<body class="bg-light">
+
+    {{template "cabecalho"}}
+
+    <div class="container py-5">
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                <div class="mb-4">
+                    <h2 class="fw-bold">✏️ Editar Publicação</h2>
+                    <p class="text-muted">Atualize as informações da sua publicação abaixo.</p>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-4">
+
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label fw-semibold">Título</label>
+                            <input type="text" class="form-control form-control-lg" id="titulo" name="titulo"
+                                placeholder="Digite um título" value="{{ .Titulo }}">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="conteudo" class="form-label fw-semibold">Conteúdo</label>
+                            <textarea class="form-control" id="conteudo" name="conteudo" rows="6"
+                                placeholder="Escreva o conteúdo da sua publicação">{{ .Conteudo }}</textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="/home" class="btn btn-outline-secondary">
+                                Cancelar
+                            </a>
+
+                            <button id="atualizar-publicacao" class="btn btn-primary px-4"
+                                data-publicacao-id="{{ .ID }}">
+                                💾 Salvar Alterações
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    {{template "rodape"}}
+    {{template "scripts"}}
+    <script src="/assets/js/publicacoes.js"></script>
+
+</body>
+
+</html>

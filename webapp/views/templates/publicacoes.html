@@ -6,7 +6,7 @@
 {{end}}
 
 {{define "editar"}}
-<a href="/editar" class="btn btn-sm btn-outline-primary me-2">
+<a href="/publicacoes/{{.ID}}/editar" class="btn btn-sm btn-outline-primary me-2">
     <i class="fa-solid fa-pen"></i> Editar
 </a>
 {{end}}
@@ -38,8 +38,8 @@
 
         <div class="d-flex align-items-center mt-3">
             {{ template "curtidas" .}}
-            {{ template "editar" }}
-            {{ template "deletar" }}
+            {{ template "editar" . }}
+            {{ template "deletar" .}}
         </div>
     </div>
 </div>

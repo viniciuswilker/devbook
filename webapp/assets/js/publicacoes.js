@@ -27,6 +27,7 @@ function criarPublicacao(e) {
 
 $(document).on('click', '.curtir-publicacao', curtirPublicacao)
 $(document).on('click', '.descurtir-publicacao', descurtirPublicacao)
+$(document).on('click', '#atualizar-publicacao', atualizarPublicacao)
 
 
 function curtirPublicacao(e) {
@@ -87,4 +88,29 @@ function descurtirPublicacao(e) {
     }).always(function () {
         elemento.css('pointer-events', 'auto')
     })
+}
+
+
+function atualizarPublicacao(e) {
+    $(this).prop('disabled', true)
+
+
+    const publicacaoId = $(this).data('publicacao-id')
+
+    $.ajax({
+        url: `/publicacoes/${publicacaoId}`,
+        method: "PUT",
+        contentType: "application/json",
+        data: JSON.stringify({
+            titulo: $('#titulo').val(),
+            conteudo: $('#conteudo').val()
+        })
+    }).done(function () {
+        alert('Publicação atualizada com sucesso')
+    }).fail(function () {
+        alert('Erro ao atualizar')
+    }).always(function () {
+        $('#atualizar-publicacao').prop('disabled', false)
+    })
+
 }
