@@ -28,6 +28,7 @@ function criarPublicacao(e) {
 $(document).on('click', '.curtir-publicacao', curtirPublicacao)
 $(document).on('click', '.descurtir-publicacao', descurtirPublicacao)
 $(document).on('click', '#atualizar-publicacao', atualizarPublicacao)
+$(document).on('click', '#deletar-publicacao', deletarPublicacao)
 
 
 function curtirPublicacao(e) {
@@ -109,6 +110,38 @@ function atualizarPublicacao(e) {
         alert('Publicação atualizada com sucesso')
     }).fail(function () {
         alert('Erro ao atualizar')
+    }).always(function () {
+        $('#atualizar-publicacao').prop('disabled', false)
+    })
+
+}
+
+
+
+
+function deletarPublicacao(e) {
+    $(this).prop('disabled', true)
+
+    const elemento = $(this)
+    const publicacaoId = elemento
+        .closest('[data-publicacao-id]')
+        .data('publicacao-id')
+
+
+
+    $.ajax({
+        url: `/publicacoes/${publicacaoId}`,
+        method: "DELETE",
+        contentType: "application/json",
+        data: JSON.stringify({
+            titulo: $('#titulo').val(),
+            conteudo: $('#conteudo').val()
+        })
+    }).done(function () {
+        alert('Publicação deletada com sucesso')
+        window.location.reload()
+    }).fail(function () {
+        alert('Erro ao deletar')
     }).always(function () {
         $('#atualizar-publicacao').prop('disabled', false)
     })
