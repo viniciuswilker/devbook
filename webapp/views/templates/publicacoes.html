@@ -1,0 +1,58 @@
+{{define "curtidas"}}
+<span class="me-3 text-muted curtir-publicacao" style="cursor: pointer;">
+    <i class="fa-solid fa-heart text-danger"></i>
+    <span class="contador-curtidas">{{.Curtidas}}</span>
+</span>
+{{end}}
+
+{{define "editar"}}
+<a href="/editar" class="btn btn-sm btn-outline-primary me-2">
+    <i class="fa-solid fa-pen"></i> Editar
+</a>
+{{end}}
+
+{{define "deletar"}}
+<a href="/deletar" class="btn btn-sm btn-outline-danger">
+    <i class="fa-solid fa-trash"></i> Deletar
+</a>
+{{end}}
+
+{{define "cabecalho-publicacao"}}
+<h5 class="card-title">{{ .Titulo }}</h5>
+
+<p class="card-text">{{ .Conteudo }}</p>
+
+<div class="text-muted small">
+    <i class="fa-solid fa-user"></i>
+    {{ .AutorNick }}
+    •
+    <i class="fa-solid fa-calendar"></i>
+    {{ .CriadaEm.Format "02/01/2006" }}
+</div>
+{{end}}
+
+{{ define "publicacao-com-permissao"}}
+<div class="card shadow-sm mb-3" data-publicacao-id="{{.ID}}">
+    <div class="card-body">
+        {{ template "cabecalho-publicacao" .}}
+
+        <div class="d-flex align-items-center mt-3">
+            {{ template "curtidas" .}}
+            {{ template "editar" }}
+            {{ template "deletar" }}
+        </div>
+    </div>
+</div>
+{{end}}
+
+{{ define "publicacao-sem-permissao"}}
+<div class="card shadow-sm mb-3" data-publicacao-id="{{.ID}}">
+    <div class="card-body">
+        {{ template "cabecalho-publicacao" .}}
+
+        <div class="mt-3">
+            {{ template "curtidas" .}}
+        </div>
+    </div>
+</div>
+{{end}}

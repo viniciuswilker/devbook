@@ -49,21 +49,11 @@
             <div class="col-lg-8">
 
                 {{ range .Publicacoes }}
-
-                <div class="card shadow-sm mb-3">
-                    <div class="card-body">
-
-                        <h5 class="card-title">{{ .Titulo }}</h5>
-
-                        <p class="card-text">{{ .Conteudo }}</p>
-
-                        <div class="text-muted small">
-                            {{ .AutorNick }} • {{ .CriadaEm }}
-                        </div>
-
-                    </div>
-                </div>
-
+                    {{ if (eq .AutorID $.UsuarioID)}}
+                        {{ template "publicacao-com-permissao" .}}
+                    {{else}}
+                        {{template "publicacao-sem-permissao".}}
+                    {{end}}
                 {{ end }}
 
             </div>
